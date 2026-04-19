@@ -1,10 +1,12 @@
 import pool from '../../lib/db'
-import { uploadQualitySelect } from '../../lib/upload-quality'
+import { ensureUploadHistoryQualityColumns, uploadQualitySelect } from '../../lib/upload-quality'
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' })
 
   try {
+    await ensureUploadHistoryQualityColumns(pool)
+
     const result = await pool.query(`
       SELECT
         uh.id, uh.filename, uh.original_name,
